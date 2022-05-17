@@ -20,7 +20,7 @@ export class MessageEditComponent implements OnInit {
   // send this ingredient to the the list component
   @Output() messageAdded = new EventEmitter<Message>()
 
-  currentSender: string = 'Lakeram'
+  currentSender: string = 'Chika'
 
   constructor() {}
 
@@ -35,7 +35,8 @@ export class MessageEditComponent implements OnInit {
       messageInput,
       this.currentSender,
     )
-    this.messageAdded.emit(newMessage)
+    this.messageAdded.emit(newMessage);
+    this.onClear();
   }
   onClear() {
     this.subjectInput.nativeElement.value = ''
