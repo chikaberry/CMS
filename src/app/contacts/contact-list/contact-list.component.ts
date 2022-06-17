@@ -1,7 +1,8 @@
 import { Component,  OnInit, Output } from '@angular/core'
-import { concat } from 'rxjs'
+import { concat, Subscription } from 'rxjs'
 import { Contact } from '../contact.model'
 import {ContactService} from '../contact.service';
+
 
 @Component({
   selector: 'cms-contact-list',
@@ -9,17 +10,20 @@ import {ContactService} from '../contact.service';
   styleUrls: ['./contact-list.component.css'],
 })
 export class ContactListComponent implements OnInit {
-  
+  private Subscription: Subscription 
   contacts: Contact[] = [];
 
   constructor(private contactService: ContactService) { }
 
   ngOnInit() {
     this.contacts = this.contactService.getContacts();
+    this.Subscription =this.contactService.contactChangedEvent.subscribe(
+      (contact:Contact[]) => {
+        this.contacts=contact;
+      }
+    )
   }
 
 
-  onContactSelected(contact: Contact) {
-    this.contactService.contactSelectedEvent.emit(contact);
-  }
+  
 }
