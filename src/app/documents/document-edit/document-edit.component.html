@@ -12,7 +12,8 @@
               size="120"
               max="120"
               name="name"
-              [ngModel] ="originalDocument?.name"
+              [ngModel] ="document?.name"
+              #name="ngModel"
               required
               > 
           </div>
@@ -28,7 +29,8 @@
               name="description"
               size="120"
               max="255"
-              [ngModel] ="originalDocument?.description"
+              [ngModel] ="document?.description"
+              #description="ngModel"
               >
           </div>
         </div>
@@ -43,7 +45,8 @@
               name="url"
               size="150"
               max="255"
-              [ngModel] ="originalDocument?.url"
+              [ngModel]="document?.url"
+              #url="ngModel"
               required
               >
           </div>

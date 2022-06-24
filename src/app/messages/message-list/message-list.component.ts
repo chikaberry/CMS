@@ -16,9 +16,10 @@ export class MessageListComponent implements OnInit {
     this.MessageService.messageChanged.subscribe((messages:Message[]) => {
       this.messages = messages;
     });
+    this.MessageService.getMessages();
   }
 
-  onAddMessage(message: Message) {
-    this.messages.push(message)
-  }
+  // onAddMessage(message: Message) {
+  //   this.messages.push(message)
+  // }
 }

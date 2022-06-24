@@ -39,11 +39,11 @@ export class ContactEditComponent implements OnInit {
       this.editMode = true;
       this.contact=JSON.parse(JSON.stringify(this.originalContact));
 
-      if(this.contact.group)
-      {
+     
+        if(this.originalContact.group && this.originalContact.group.length > 0){
         this.groupContacts =JSON.parse (JSON.stringify(this.originalContact.group));
       }
-    })
+    });
   }
 
 onCancel(){
@@ -53,7 +53,7 @@ onCancel(){
 onSubmit(form:NgForm)
 {
 let value = form.value;
-let newContact = new Contact(value.id,value.name, value.email,value.phone, value.imageUrl,[]);
+let newContact = new Contact('',value.name, value.email,value.phone, value.imageUrl,this.groupContacts);
 if (this.editMode){
   this.contactService.updateContact(this.originalContact, newContact);
 }

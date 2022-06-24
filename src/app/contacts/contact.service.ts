@@ -107,7 +107,7 @@ storeContact(){
   const headers = new HttpHeaders()
   .set('content-type', 'application/json')
   .set('Access-control-Allow-Origin', '*');
-  this.http.put('https://cms-2022-default-rtdb.firebaseio.com/documents.json', contacts, {headers: headers} )
+  this.http.put('https://cms-2022-default-rtdb.firebaseio.com/contacts.json', contacts, {headers: headers} )
   .subscribe(data => this.contactChangedEvent.next(this.contacts.slice()));
 }
 

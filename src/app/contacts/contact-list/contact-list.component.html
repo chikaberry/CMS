@@ -17,7 +17,7 @@
             <div class="col-xs-12">
               <cms-contact-item *ngFor="let contact of contacts | contactsFilter:term"
               [contact]="contact" 
-              dnd-dragabble [dragEnabled]="true" [dragData]="contact" [dropZones]="['contactGroup']"></cms-contact-item> 
+              dnd-draggable [dragEnabled]="true" [dragData]="contact" [dropZones]="['contactGroup']"></cms-contact-item> 
 
       
       </div>

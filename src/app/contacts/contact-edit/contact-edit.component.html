@@ -12,6 +12,7 @@
               max="120"
               name="name"
               [ngModel]="contact?.name"
+              #name="ngModel"
               required>
           </div>
         </div>
@@ -29,7 +30,7 @@
               [ngModel] ="contact?.email"
               #email="ngModel"
               required
-              pattern=“[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$”
+              
               >
               <div *ngIf="!email.valid && email.touched" class="alert alert-danger">
                 Enter a valid email address
@@ -52,7 +53,7 @@
               pattern="\D*([2-9]\d{2})(\D*)([2-9]\d{2})(\D*)(\d{4})\D*" 
               #phone="ngModel">
             
-            <div *ngIf="phone.valid && phone.touched" class="alert alert-danger">
+            <div *ngIf="!phone.valid && phone.touched" class="alert alert-danger">
                 Enter a valid phone number
             </div>
               
@@ -72,7 +73,7 @@
               max="255"
               name="imageUrl"
               [ngModel]="contact?.imageUrl"
-              #name="ngModel">
+              #imageUrl="ngModel">
           </div>
         </div>
   
@@ -95,9 +96,9 @@
   
           </div>
         </div>
-        <div *ngIf="!f.valid" class="alert alert-danger">
+        <!-- <div *ngIf="(name.invalid && name.touched) || (email.invalid && email.touched)" class="alert alert-danger">
             Name and email fields are required
-        </div>
+        </div> -->
   
         <div class="row">
           <div class="col-xs-12 btn-toolbar">
