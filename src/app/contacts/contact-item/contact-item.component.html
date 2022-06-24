@@ -1,13 +1,12 @@
-<a  routerLinkActive="active" [routerLink]="contact.id"  class="list-group-item clearfix"
-(click)="onSelected()">
+<a  routerLinkActive="active" [routerLink]="contact.id"  class="list-group-item clearfix">
   <div class="pull-left">
     <h4 class="list-group-item-heading">{{ contact.name }}</h4>
   </div>
   <span class="pull-right">
     <img
-      src="{{ contact.imageUrl }}"
+      [src]="contact?.imageUrl"
       [alt]="contact?.name"
-      *ngIf="contact?.name"
+      *ngIf="contact?.imageUrl"
       class="img-responsive"
       style="max-height: 50px;"
     />

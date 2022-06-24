@@ -1,26 +1,40 @@
 import { EventEmitter, Injectable  } from '@angular/core';
-import { MOCKDOCUMENTS} from './mockdocuments';
+
 import { Document } from './document.model';
 import { Subject} from 'rxjs';
+import {HttpClient, HttpHeaders} from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'
 })
 export class DocumentService {
 
-  documents : Document[] = [];
+  private documents : Document[] = [];
   documentSelectedEvent = new EventEmitter<Document>();
   documentChangedEvent = new Subject <Document[]>();
   maxDocumentId: number;
 
-  constructor() {
-    this.documents = MOCKDOCUMENTS;
-    this.maxDocumentId = this.getMaxId();
+  constructor(private http:HttpClient) {
+    //this.documents = MOCKDOCUMENTS;
+    //this.maxDocumentId = this.getMaxId();
+    
    }
-   getDocuments(): Document[]{
-     return this.documents.slice();
+   getDocuments(){
+     //return this.documents.slice();
+     this.http.get('https://cms-2022-default-rtdb.firebaseio.com/documents.json')
+     .subscribe((documents: Document[]) => {
+       console.log (documents)
+       this.documents = documents;
+       this.maxDocumentId = this.getMaxId()
+       this.documentChangedEvent.next(this.documents.slice());
+     }, (error) => {
+       console.log(error)
+     
+     })
+    }
+  
+       
 
-   }
 
    getDocument(id: string): Document{
      return this.documents.find((document)=> document.id === id);
@@ -35,7 +49,7 @@ export class DocumentService {
        return;
     }
     this.documents.splice(pos, 1);
-    this.documentChangedEvent.next(this.documents.slice());
+    this.storeDocument();
   
  }
 
@@ -61,7 +75,7 @@ addDocument(newDocument: Document){
   this.maxDocumentId++;
   newDocument.id = this.maxDocumentId.toString()
   this.documents.push(newDocument);
-  this.documentChangedEvent.next(this.documents.slice());
+  this.storeDocument();
 }
 
 updateDocument(originalDocument: Document, newDocument: Document){
@@ -74,9 +88,29 @@ if (pos < 0 ) {
 }
 newDocument.id = originalDocument.id;
 this.documents[pos] = newDocument;
-this.documentChangedEvent.next(this.documents.slice());
-
+this.storeDocument()
 }
+
+
+storeDocument(){
+  const documents = JSON.stringify(this.documents);
+  const headers = new HttpHeaders()
+  .set('content-type', 'application/json')
+  .set('Access-control-Allow-Origin', '*');
+  this.http.put('https://cms-2022-default-rtdb.firebaseio.com/documents.json', documents, {headers: headers})
+  .subscribe(data => this.documentChangedEvent.next(this.documents.slice()));
+}
+
+
+
+
+
+
+
+
+
+
+
 
 
 

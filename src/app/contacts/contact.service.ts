@@ -1,7 +1,7 @@
-import { Injectable, EventEmitter} from '@angular/core';
+import { Injectable} from '@angular/core';
 import { Contact } from './contact.model';
-import {MOCKCONTACTS} from './MOCKCONTACTS';
 import { Subject} from 'rxjs';
+import {HttpClient, HttpHeaders} from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'
@@ -12,18 +12,29 @@ export class ContactService {
   private contacts: Contact[] = [];
   maxContactId : number;
 
-  contactSelectedEvent = new EventEmitter <Contact>();
+ 
   contactChangedEvent = new Subject<Contact[]>();
 
-  constructor() { 
-    this.contacts = MOCKCONTACTS;
-    this.maxContactId = this.getMaxId();
+  constructor(private http: HttpClient) { 
+    // this.contacts = MOCKCONTACTS;
+    // this.maxContactId = this.getMaxId();
   }
 
 
-  getContacts():Contact[] {
-    return this.contacts.slice();
-  }
+  getContacts(){
+    //return this.contacts.slice();
+    this.http.get('https://cms-2022-default-rtdb.firebaseio.com/contacts.json')
+     .subscribe((contacts: Contact[]) => {
+       console.log (contacts)
+       this.contacts = contacts;
+       this.maxContactId = this.getMaxId()
+       this.contactChangedEvent.next(this.contacts.slice());
+     }, (error) => {
+       console.log(error)
+     
+     });
+    }
+  
 
   //The ContactService also needs a method to find a specific Contact object in the contacts array
   getContact(id: string): Contact{
@@ -41,7 +52,7 @@ export class ContactService {
        return;
     }
     this.contacts.splice(pos, 1);
-    this.contactChangedEvent.next(this.contacts.slice());
+    this.storeContact();
   }
 
  getMaxId(){
@@ -72,7 +83,7 @@ export class ContactService {
   this.maxContactId++;
   newContact.id = this.maxContactId.toString()
   this.contacts.push(newContact);
-  this.contactChangedEvent.next(this.contacts.slice());
+  this.storeContact();
 }
 
 
@@ -86,9 +97,24 @@ if (pos < 0 ) {
 }
 newContact.id = originalContact.id;
 this.contacts[pos] = newContact;
-this.contactChangedEvent.next(this.contacts.slice());
+this.storeContact();
 
 }
+
+
+storeContact(){
+  const contacts = JSON.stringify(this.contacts);
+  const headers = new HttpHeaders()
+  .set('content-type', 'application/json')
+  .set('Access-control-Allow-Origin', '*');
+  this.http.put('https://cms-2022-default-rtdb.firebaseio.com/documents.json', contacts, {headers: headers} )
+  .subscribe(data => this.contactChangedEvent.next(this.contacts.slice()));
+}
+
+
+
+
+
 }
 
 

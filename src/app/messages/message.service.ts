@@ -1,7 +1,8 @@
 
 import { Injectable , EventEmitter } from '@angular/core';
-import { MOCKMESSAGES} from './MOCKMESSAGES'
-import { Message} from './message.model'
+import { MOCKMESSAGES} from './MOCKMESSAGES';
+import { Message} from './message.model';
+import {HttpClient, HttpHeaders} from '@angular/common/http';
 
 
 @Injectable({
@@ -10,23 +11,91 @@ import { Message} from './message.model'
 export class MessageService {
   messageChanged = new EventEmitter <Message[]>();
   private messages: Message [] = [];
+  maxMessageId: number;
 
-  constructor() { 
-    this.messages = MOCKMESSAGES;
+  constructor(private http: HttpClient) { 
+    // this.messages = MOCKMESSAGES;
   }
 
-  getMessages(): Message[]{
-    return this.messages.slice();
-  }
+  
 
-  getMessage(id: string): Message{
-    return this.messages.find((message) => message.id === id);
+  getMessage(id: string){
+  this.messages.forEach(message => {
+    if(id == message.id)
+  {
+  return message;
   }
+  else{
+    return null
+  }
+});
+}
 
   addMessage(message: Message){
     this.messages.push(message);
-    this.messageChanged.emit(this.messages.slice())
+    this.storeMessages()
   }
+
+  getMaxId(){
+
+    let maxId = 0;
+  
+    this.messages.forEach(message => {
+      let currId = parseInt(message.id);
+      if (currId > maxId)
+      {
+        maxId = currId;}
+  
+      
+      });
+    
+      return maxId
+   }
+
+   getMessages(){
+    //return this.contacts.slice();
+    this.http.get('https://cms-2022-default-rtdb.firebaseio.com/messages.json')
+     .subscribe((messages: Message[]) => {
+       console.log (messages)
+       this.messages = messages;
+       this.maxMessageId = this.getMaxId()
+       this.messageChanged.emit(this.messages.slice())
+     }, (error) => {
+       console.log(error)
+     
+     })
+    }
+  
+
+    storeMessages(){
+      const messages = JSON.stringify(this.messages);
+      const headers = new HttpHeaders()
+      .set('content-type', 'application/json')
+      .set('Access-control-Allow-Origin', '*');
+      this.http.put('https://cms-2022-default-rtdb.firebaseio.com/messages.json', messages, {headers: headers} )
+      .subscribe(data => this.messageChanged.emit(this.messages.slice()));
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   
   
 }
